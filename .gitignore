@@ -1,0 +1,9 @@
+Lib/
+.venv/
+__pycache__/
+*.pyc
+library/*
+!library/.gitkeep
+config.json
+*.log
+*.bak*

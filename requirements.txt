@@ -1,0 +1,10 @@
+# Installed automatically by run.bat on first launch.
+fastapi
+uvicorn
+python-multipart
+pypdf
+
+# Optional: only needed for the .docx draft export button. The app runs and
+# the rest of the UI works without it; that one button reports why it's
+# unavailable instead of failing to start.
+python-docx

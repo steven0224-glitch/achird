@@ -1,0 +1,10 @@
+{
+ "obsidian_vault_path": "C:/Users/<you>/path/to/ObsidianVault",
+ "obsidian_subfolder": "01_Wiki/Research",
+ "zotero_data_dir": "C:/Users/<you>/Zotero",
+ "export_pdf": false,
+ "export_translation": true,
+ "export_chat": true,
+ "cite_citekey": false,
+ "auto_prep": true
+}

@@ -1,0 +1,231 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Achird Local</title>
+<link rel="stylesheet" href="/static/styles.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Ccircle cx='8.1' cy='15.6' r='3.2' fill='%23C28A0E'/%3E%3Ccircle cx='15.9' cy='8.4' r='1.9' fill='%23C28A0E'/%3E%3C/svg%3E">
+</head>
+<body>
+
+<!-- ================= HOME ================= -->
+<div class="screen on" id="home">
+  <div class="home-bar">
+    <svg class="star-glyph" viewBox="0 0 20 20" aria-hidden="true">
+      <path class="star-fill star-far" d=""></path>
+      <ellipse class="star-track" cx="10" cy="10" rx="6.8" ry="3.06" transform="rotate(-16 10 10)"></ellipse>
+      <path class="star-fill star-near" d=""></path>
+    </svg>
+    <strong style="font-size:.9375rem; letter-spacing:-.01em;">Achird Local</strong>
+    <div class="seg" role="tablist" aria-label="모드">
+      <button class="seg-btn on" data-mode="read" role="tab" aria-selected="true">읽기</button>
+      <button class="seg-btn" data-mode="write" role="tab" aria-selected="false">쓰기</button>
+    </div>
+    <span class="rd-spacer"></span>
+    <button class="tb-btn" id="zotero-btn" title="Zotero에서 가져오기" aria-label="Zotero에서 가져오기"></button>
+    <button class="tb-btn" id="theme-btn" title="테마 전환" aria-label="테마 전환"></button>
+  </div>
+  <div class="home-scroll edge-fade">
+    <div class="home-inner">
+      <h1 class="home-title">라이브러리</h1>
+      <p class="home-sub">논문을 올리면 번역·설명·요약·채팅이 바로 붙습니다.</p>
+      <div class="continue-card" id="continue-card" hidden></div>
+      <div class="lib-search" id="lib-search">
+        <span class="ls-glass" aria-hidden="true"></span>
+        <input id="lib-in" type="search" placeholder="서재 전체 검색 — 원문·번역 (Ctrl+F)"
+               aria-label="서재 전체 검색" autocomplete="off" spellcheck="false">
+        <button class="ls-clear" id="lib-clear" title="지우기" aria-label="검색 지우기" hidden></button>
+      </div>
+      <div class="lib-ai-bar" id="lib-ai-bar">
+        <input id="ask-in" type="text" placeholder="서재 전체에 질문"
+               title="근거 구절과 출처로 답합니다"
+               aria-label="서재 전체에 질문" autocomplete="off" spellcheck="false">
+        <button class="btn primary pressable" id="ask-btn">질문</button>
+        <button class="btn pressable" id="cmp-btn">선택 모드</button>
+        <button class="btn pressable" id="graph-btn">인용 그래프</button>
+        <button class="btn pressable" id="find-btn">논문 찾기</button>
+        <button class="btn pressable" id="trends-btn">연구 트렌드</button>
+        <button class="btn pressable" id="queue-btn">읽을 논문 대기열</button>
+        <button class="btn pressable" id="review-btn">다시 볼 논문</button>
+        <button class="btn pressable" id="jobs-btn">백그라운드 작업</button>
+      </div>
+      <div class="lib-ai" id="lib-ai" hidden></div>
+      <div class="lib-results" id="lib-results" hidden></div>
+      <div class="shelf-filter" id="shelf-filter"></div>
+      <div class="shelf" id="shelf"></div>
+      <div class="home-empty" id="home-empty" hidden>
+        <svg class="star-glyph" viewBox="0 0 20 20" style="width:2.6rem;height:2.6rem;margin:0 auto;">
+          <path class="star-fill star-far" opacity="0.503" d="M 4.46 8.72 A 1.01 1.01 0 1 0 6.49 8.72 A 1.01 1.01 0 1 0 4.46 8.72 Z"></path>
+          <ellipse class="star-track" cx="10" cy="10" rx="6.8" ry="3.06" transform="rotate(-16 10 10)"></ellipse>
+          <path class="star-fill star-near" opacity="0.947" d="M 11.29 11.28 A 3.23 3.23 0 1 0 17.75 11.28 A 3.23 3.23 0 1 0 11.29 11.28 Z"></path>
+        </svg>
+        <h2>첫 논문을 올려보세요</h2>
+        <p>PDF를 이 창에 끌어다 놓거나, 아래 버튼으로 선택하면 됩니다.</p>
+        <button class="btn primary pressable" id="empty-upload">PDF 열기</button>
+      </div>
+    </div>
+  </div>
+  <input type="file" id="file-input" accept="application/pdf,.pdf" multiple hidden>
+</div>
+
+<!-- ================= WRITER (집필) =================
+     읽기 탭이 "한 편을 이해"라면 여기는 "여러 편을 가로질러 뽑아낸다".
+     왼쪽은 서재 전체의 근거, 오른쪽은 절 단위 초안. 서식 편집은 하지 않는다 — 워드프로세서 몫. -->
+<div class="screen" id="writer">
+  <div class="home-bar">
+    <svg class="star-glyph" viewBox="0 0 20 20" aria-hidden="true">
+      <path class="star-fill star-far" d=""></path>
+      <ellipse class="star-track" cx="10" cy="10" rx="6.8" ry="3.06" transform="rotate(-16 10 10)"></ellipse>
+      <path class="star-fill star-near" d=""></path>
+    </svg>
+    <strong style="font-size:.9375rem; letter-spacing:-.01em;">Achird Local</strong>
+    <div class="seg" role="tablist" aria-label="모드">
+      <button class="seg-btn" data-mode="read" role="tab" aria-selected="false">읽기</button>
+      <button class="seg-btn on" data-mode="write" role="tab" aria-selected="true">쓰기</button>
+    </div>
+    <span class="rd-spacer"></span>
+    <span class="wr-saved" id="wr-saved" aria-live="polite"></span>
+    <button class="tb-btn" id="theme-btn-w" title="테마 전환" aria-label="테마 전환"></button>
+  </div>
+  <div class="wr-toolbar">
+    <input id="wr-title" type="text" placeholder="원고 제목" aria-label="원고 제목" autocomplete="off" spellcheck="false">
+    <button class="btn pressable" id="wr-savedtbl">저장된 근거표</button>
+    <button class="btn pressable" id="wr-cite">번호 인용</button>
+    <button class="btn pressable" id="wr-gloss">통합 용어집</button>
+    <button class="btn pressable" id="wr-bib">전체 .bib</button>
+    <button class="btn pressable" id="wr-export">초안 내보내기</button>
+    <button class="btn pressable" id="wr-docx">.docx</button>
+  </div>
+  <div class="lib-ai" id="wr-ai" hidden></div>
+  <div class="wr-body">
+    <aside class="wr-ev edge-fade" id="wr-ev"></aside>
+    <div class="wr-draft" id="wr-draft"></div>
+  </div>
+</div>
+
+<!-- ================= READER ================= -->
+<div class="screen" id="reader">
+  <div class="rd-bar">
+    <button class="tb-btn" id="back-btn" title="라이브러리로" aria-label="라이브러리로"></button>
+    <div class="rd-title" id="rd-title"></div>
+    <span class="rd-spacer"></span>
+    <span class="rd-page" id="rd-page" title="클릭해서 쪽 이동" role="button" tabindex="0"></span>
+    <span class="tb-sep"></span>
+    <button class="tb-btn" id="zoom-out" title="축소" aria-label="축소"></button>
+    <button class="tb-btn" id="zoom-in" title="확대" aria-label="확대"></button>
+    <span class="tb-sep"></span>
+    <button class="tb-btn" id="trans-btn" title="원문·번역 나란히 보기 (T)" aria-label="원문·번역 나란히 보기"></button>
+    <button class="tb-btn" id="key-btn" title="핵심 4색 하이라이트 (K) — 분홍 독창성 · 연두 방법 · 연보라 결과 · 하늘 한계" aria-label="핵심 4색 하이라이트"></button>
+    <button class="tb-btn" id="map-btn" title="마인드맵 (M) — 논지 구조 지도" aria-label="마인드맵"></button>
+    <button class="tb-btn" id="cap-btn" title="그림 캡처 (C) — 드래그로 영역 지정" aria-label="그림 캡처"></button>
+    <span class="tb-sep"></span>
+    <span class="star-busy-label" id="busy-label" hidden></span>
+    <button class="tb-btn star-btn" id="star-btn" title="AI 패널" aria-label="AI 패널 열기/닫기">
+      <svg class="star-glyph" id="star-main" viewBox="0 0 20 20" aria-hidden="true">
+        <path class="star-fill star-far" d=""></path>
+        <ellipse class="star-track" cx="10" cy="10" rx="6.8" ry="3.06" transform="rotate(-16 10 10)"></ellipse>
+        <path class="star-fill star-near" d=""></path>
+      </svg>
+    </button>
+  </div>
+  <div class="thin-bar" id="thin-bar"></div>
+
+  <div class="rd-body">
+    <div class="rd-well">
+      <div class="parallel-bar" id="parallel-bar" hidden></div>
+      <div class="scan-banner" id="scan-banner" hidden></div>
+      <div class="scan-banner dup-banner" id="dup-banner" hidden></div>
+      <div class="kp-legend" id="kp-legend" hidden></div>
+      <div class="find-bar" id="find-bar" hidden>
+        <span class="fb-glass" id="fb-glass" aria-hidden="true"></span>
+        <input id="find-in" type="text" placeholder="원문 검색" aria-label="원문 검색" autocomplete="off" spellcheck="false">
+        <span class="find-count" id="find-count"></span>
+        <button class="fb-btn" id="find-prev" title="이전 (Shift+Enter)" aria-label="이전 결과"></button>
+        <button class="fb-btn" id="find-next" title="다음 (Enter)" aria-label="다음 결과"></button>
+        <button class="fb-btn" id="find-close" title="닫기 (Esc)" aria-label="검색 닫기"></button>
+      </div>
+      <div class="pages-scroll edge-fade" id="pages-scroll">
+        <div class="pages" id="pages"></div>
+      </div>
+      <!-- 마인드맵: 인스펙터(272~544px)는 지도에 좁다. 읽기 well 전체를 쓴다. -->
+      <div class="map-well" id="map-well" hidden></div>
+    </div>
+
+    <aside class="inspector" id="inspector">
+      <div class="insp-grip" id="insp-grip" title="크기 조절"></div>
+      <div class="insp-tabs" id="insp-tabs" role="tablist"></div>
+      <div class="insp-body">
+        <div class="ipane" id="ipane-summary" role="tabpanel"></div>
+        <div class="ipane" id="ipane-analysis" role="tabpanel"></div>
+        <div class="ipane" id="ipane-toc" role="tabpanel"></div>
+        <div class="ipane" id="ipane-term" role="tabpanel"></div>
+        <div class="ipane" id="ipane-chat" role="tabpanel">
+          <div class="chat-log" id="chat-log"></div>
+          <div class="chat-chips" id="chat-chips" hidden></div>
+          <div class="chat-input-row">
+            <textarea class="chat-ta" id="chat-ta" rows="1" placeholder="논문에 대해 물어보기…" aria-label="논문에 대해 질문 입력"></textarea>
+            <button class="chat-send" id="chat-send" aria-label="보내기"></button>
+          </div>
+        </div>
+        <div class="ipane" id="ipane-notes" role="tabpanel"></div>
+        <div class="ipane" id="ipane-hl" role="tabpanel"></div>
+        <div class="ipane" id="ipane-refs" role="tabpanel"></div>
+        <div class="ipane" id="ipane-fig" role="tabpanel"></div>
+        <div class="ipane" id="ipane-export" role="tabpanel"></div>
+      </div>
+    </aside>
+  </div>
+</div>
+
+<!-- selection popover -->
+<div class="sel-pop" id="sel-pop" role="menu"></div>
+
+<!-- ai result / citation popover -->
+<div class="cite-pop" id="cite-pop"></div>
+
+<!-- toasts -->
+<div class="toasts" id="toasts" role="status" aria-live="polite"></div>
+
+<!-- destructive confirm -->
+<div class="scrim" id="scrim">
+  <div class="dialog" role="alertdialog" aria-modal="true">
+    <h3 id="dlg-title"></h3>
+    <p id="dlg-msg"></p>
+    <div class="d-row">
+      <button class="btn pressable" id="dlg-cancel">취소</button>
+      <button class="btn destructive pressable" id="dlg-ok">삭제</button>
+    </div>
+  </div>
+</div>
+
+<!-- Zotero import -->
+<div class="scrim" id="zscrim">
+  <div class="dialog" role="dialog" aria-modal="true" style="width:32rem;max-width:calc(100vw - 2rem);">
+    <h3>Zotero에서 가져오기</h3>
+    <p id="zmsg"></p>
+    <div id="zlist"></div>
+    <div class="d-row">
+      <button class="btn pressable" id="zcancel">취소</button>
+      <button class="btn primary pressable" id="zok">가져오기</button>
+    </div>
+  </div>
+</div>
+
+<!-- command palette (Ctrl/Cmd+K) -->
+<div class="scrim cmdk-scrim" id="cmdk-scrim">
+  <div class="cmdk-pal" id="cmdk-pal" role="dialog" aria-modal="true" aria-label="명령 팔레트">
+    <div class="cmdk-inrow">
+      <span class="cmdk-glass" id="cmdk-glass" aria-hidden="true"></span>
+      <input id="cmdk-in" type="text" placeholder="명령 검색…" aria-label="명령 검색" autocomplete="off" spellcheck="false">
+    </div>
+    <div class="cmdk-list" id="cmdk-list" role="listbox" aria-label="명령 목록"></div>
+  </div>
+</div>
+
+<script src="/static/vendor/marked.min.js"></script>
+<script src="/static/vendor/motion.min.js"></script>
+<script src="/static/orbs.js"></script>
+<script type="module" src="/static/app.js"></script>
+</body>
+</html>
