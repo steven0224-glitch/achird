@@ -13,7 +13,7 @@ verification. **Write** is for pulling evidence out of the whole library into a
 section-by-section draft: an evidence board on the left, section drafts on the right,
 numbered citations, overlap checking, AI draft scoring, citation integrity checks.
 
-The author (Chanui Jung, chemical engineering undergraduate, Sogang University, Seoul)
+The author (Chaneui Jung, chemical engineering undergraduate, Sogang University, Seoul)
 built this with Claude Code over roughly June–August 2026 as a daily research tool,
 first for personal paper reading and then for a review-paper writing workflow. This
 repository is a snapshot of that tool, published to show how it was built and how it
